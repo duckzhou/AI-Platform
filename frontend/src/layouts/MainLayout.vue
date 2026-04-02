@@ -136,7 +136,7 @@ import { useUserStore } from '@/stores/user'
 import { getQuotaInfo } from '@/api/quota'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { 
-  ChatDotRound, MagicStick, List, Picture, Coin, User, 
+  ChatDotRound, MagicStick, List, Picture, Coin, User, InfoFilled,
   ArrowDown, SwitchButton, Expand, Fold
 } from '@element-plus/icons-vue'
 
@@ -157,6 +157,7 @@ const resourceMenuItems = [
   { path: '/materials', label: '素材管理', icon: 'Picture' },
   { path: '/quota', label: '额度中心', icon: 'Coin' },
   { path: '/profile', label: '个人中心', icon: 'User' },
+  { path: '/about', label: '关于我们', icon: 'InfoFilled' },
 ]
 
 // 页面标题映射
@@ -167,6 +168,7 @@ const pageTitleMap = {
   '/materials': '素材管理',
   '/quota': '额度中心',
   '/profile': '个人中心',
+  '/about': '关于我们',
 }
 
 const currentPageTitle = computed(() => {
