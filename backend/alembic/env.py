@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+import os
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -26,6 +27,17 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
+# 从环境变量读取数据库配置（Docker 环境下优先使用环境变量）
+def get_database_url():
+    """从环境变量构建数据库 URL"""
+    host = os.getenv("POSTGRES_HOST", "localhost")
+    port = os.getenv("POSTGRES_PORT", "5432")
+    user = os.getenv("POSTGRES_USER", "postgres")
+    password = os.getenv("POSTGRES_PASSWORD", "")
+    database = os.getenv("POSTGRES_DATABASE", "ai_platform")
+    
+    return f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -39,7 +51,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = get_database_url()
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -58,8 +70,11 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
+    # 使用环境变量构建数据库 URL
+    database_url = get_database_url()
+    
     connectable = engine_from_config(
-        config.get_section(config.config_ini_section, {}),
+        {"sqlalchemy.url": database_url},
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )
