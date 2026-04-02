@@ -1,6 +1,41 @@
 version: '3.8'
 
 services:
+  # ==================== PostgreSQL 数据库 ====================
+  postgres:
+    image: postgres:15-alpine
+    container_name: ai_platform_postgres
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DATABASE:-ai_platform}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ai_platform_network
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==================== Redis 缓存 ====================
+  redis:
+    image: redis:7-alpine
+    container_name: ai_platform_redis
+    command: redis-server
+    volumes:
+      - redis_data:/data
+    networks:
+      - ai_platform_network
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # ==================== 前端服务 ====================
   frontend:
     build:
@@ -23,18 +58,16 @@ services:
     container_name: ai_platform_api
     expose:
       - "8000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      # 数据库配置（连接本地 PostgreSQL）
-      - POSTGRES_HOST=host.docker.internal
+      # 数据库配置（使用 Docker 内部网络）
+      - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE:-ai_platform}
       
-      # Redis 配置（连接本地 Redis）
-      - REDIS_HOST=host.docker.internal
+      # Redis 配置（使用 Docker 内部网络）
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_DB=0
       
@@ -56,7 +89,11 @@ services:
       - DEBUG=false
       - APP_NAME=AI Platform
       - VERSION=1.0.0
-    depends_on: []
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./backend/uploads:/app/uploads
     networks:
@@ -70,18 +107,16 @@ services:
       dockerfile: Dockerfile
     container_name: ai_platform_worker
     command: celery -A app.tasks.celery_app worker --loglevel=info
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     environment:
-      # 数据库配置（连接本地 PostgreSQL）
-      - POSTGRES_HOST=host.docker.internal
+      # 数据库配置（使用 Docker 内部网络）
+      - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=${POSTGRES_USER:-postgres}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DATABASE=${POSTGRES_DATABASE:-ai_platform}
       
-      # Redis 配置（连接本地 Redis）
-      - REDIS_HOST=host.docker.internal
+      # Redis 配置（使用 Docker 内部网络）
+      - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_DB=0
       
@@ -96,7 +131,11 @@ services:
       
       # 大模型配置
       - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
-    depends_on: []
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
       - ./backend/uploads:/app/uploads
     networks:
@@ -106,3 +145,7 @@ services:
 networks:
   ai_platform_network:
     driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

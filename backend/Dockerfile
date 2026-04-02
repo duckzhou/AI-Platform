@@ -24,6 +24,10 @@ RUN uv pip install --system -e . --index-url https://pypi.tuna.tsinghua.edu.cn/s
 # 复制应用代码
 COPY app/ ./app/
 
+# 复制 alembic 配置文件
+COPY alembic.ini ./alembic.ini
+COPY alembic/ ./alembic/
+
 # 暴露端口
 EXPOSE 8000
 
