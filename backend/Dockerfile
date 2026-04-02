@@ -1,15 +1,15 @@
 # AI Platform Backend Dockerfile
-# 使用阿里云镜像加速器
+# 使用阿里云镜像
 FROM alibaba-cloud-linux-3-registry.cn-hangzhou.cr.aliyuncs.com/alinux3/python:3.11.1
 
 # 设置工作目录
 WORKDIR /app
 
-# 安装系统依赖
-RUN apt-get update && apt-get install -y \
+# 安装系统依赖（阿里云 Linux 使用 yum）
+RUN yum install -y \
     gcc \
-    libpq-dev \
-    && rm -rf /var/lib/apt/lists/*
+    postgresql-devel \
+    && yum clean all
 
 # 安装 uv
 RUN pip install uv
