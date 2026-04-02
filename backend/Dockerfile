@@ -1,6 +1,6 @@
 # AI Platform Backend Dockerfile
-# 使用阿里云镜像源
-FROM registry.cn-hangzhou.aliyuncs.com/library/python:3.11-slim
+# 使用 Docker 中国镜像源
+FROM dockerproxy.com/library/python:3.11-slim
 
 # 设置工作目录
 WORKDIR /app
