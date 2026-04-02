@@ -1,6 +1,6 @@
 # AI Platform Frontend Dockerfile
 # 使用阿里云镜像加速器
-FROM kxeluylh.mirror.aliyuncs.com/library/node:18-alpine AS builder
+FROM alibaba-cloud-linux-3-registry.cn-hangzhou.cr.aliyuncs.com/alinux3/node:20.16 AS builder
 
 # 设置工作目录
 WORKDIR /app

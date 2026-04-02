@@ -1,6 +1,6 @@
 # AI Platform Backend Dockerfile
 # 使用阿里云镜像加速器
-FROM kxeluylh.mirror.aliyuncs.com/library/python:3.11-slim
+FROM alibaba-cloud-linux-3-registry.cn-hangzhou.cr.aliyuncs.com/alinux3/python:3.11.1
 
 # 设置工作目录
 WORKDIR /app
