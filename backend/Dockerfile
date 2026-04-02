@@ -11,8 +11,8 @@ RUN yum install -y \
     postgresql-devel \
     && yum clean all
 
-# 安装 uv
-RUN pip install uv
+# 安装 uv（使用国内镜像源）
+RUN pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple uv
 
 
 # 复制依赖文件
