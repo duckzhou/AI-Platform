@@ -108,3 +108,11 @@ Thumbs.db
 .DS_Store
 .AppleDouble
 .LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
