@@ -1,5 +1,6 @@
 # AI Platform Frontend Dockerfile
-FROM node:18-alpine AS builder
+# 使用阿里云镜像加速器
+FROM kxeluylh.mirror.aliyuncs.com/library/node:18-alpine AS builder
 
 # 设置工作目录
 WORKDIR /app
@@ -17,7 +18,7 @@ COPY . .
 RUN npm run build
 
 # 使用 Nginx 提供静态文件服务
-FROM nginx:alpine
+FROM kxeluylh.mirror.aliyuncs.com/library/nginx:alpine
 
 # 复制构建产物到 Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
