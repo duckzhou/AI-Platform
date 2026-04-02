@@ -103,48 +103,7 @@ services:
       - ai_platform_network
     restart: always
 
-  # ==================== PostgreSQL ====================
-  postgres:
-    image: registry.cn-hangzhou.aliyuncs.com/library/postgres:15-alpine
-    container_name: ai_platform_postgres
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DATABASE:-ai_platform}
-    ports:
-      - "${POSTGRES_PORT_EXTERNAL:-5432}:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./backend/init-db:/docker-entrypoint-initdb.d
-    networks:
-      - ai_platform_network
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
-  # ==================== Redis ====================
-  redis:
-    image: registry.cn-hangzhou.aliyuncs.com/library/redis:7-alpine
-    container_name: ai_platform_redis
-    ports:
-      - "${REDIS_PORT_EXTERNAL:-6379}:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - ai_platform_network
-    restart: always
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-volumes:
-  postgres_data:
-  redis_data:
 
 networks:
   ai_platform_network:
