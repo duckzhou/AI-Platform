@@ -82,7 +82,7 @@ async def get_materials(
 async def upload_material(
     file: UploadFile = File(...),
     name: str = Form(None),
-    material_type: str = Form(...),
+    material_type: str = Form("image"),  # 默认值
     category: str = Form(None),
     tags: str = Form(None),
     user_id: int = CurrentUser,
