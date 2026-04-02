@@ -18,8 +18,8 @@ RUN pip install --index-url https://pypi.tuna.tsinghua.edu.cn/simple uv
 # 复制依赖文件
 COPY pyproject.toml .
 
-# 使用 uv 安装依赖
-RUN uv pip install --system -e .
+# 使用 uv 安装依赖（使用清华镜像源）
+RUN uv pip install --system -e . --index-url https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 复制应用代码
 COPY app/ ./app/
